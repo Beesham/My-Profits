@@ -21,7 +21,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.myprofits.beesham.data.OrderContract.OrdersEntry.TABLE_NAME;
+import static com.myprofits.beesham.data.OrderContract.OrdersEntry;
 
 
 /**
@@ -40,10 +40,10 @@ public class OrderDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        final String SQL_CREATE_ORDERS_TABLE = "CREATE TABLE " + OrderContract.OrdersEntry.TABLE_NAME + "("
-                + OrderContract.OrdersEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + OrderContract.OrdersEntry.COLUMN_CUSTOMER_NAME + " TEXT NOT NULL,"
-                + OrderContract.OrdersEntry.COLUMN_ORDER_ID+ " INTEGER NOT NULL, "
+        final String SQL_CREATE_ORDERS_TABLE = "CREATE TABLE " + OrdersEntry.TABLE_NAME + "("
+                + OrdersEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + OrdersEntry.COLUMN_CUSTOMER_NAME + " TEXT NOT NULL,"
+                + OrdersEntry.COLUMN_ORDER_ID+ " INTEGER NOT NULL, "
                 + ");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);
@@ -51,7 +51,7 @@ public class OrderDatabase extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + OrderContract.OrdersEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS" + OrdersEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 }

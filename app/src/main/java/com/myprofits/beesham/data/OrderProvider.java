@@ -1,39 +1,127 @@
+/*
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.myprofits.beesham.data;
 
+import android.content.ContentProvider;
+import android.content.ContentValues;
+import android.content.UriMatcher;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
-import net.simonvt.schematic.annotation.ContentProvider;
-import net.simonvt.schematic.annotation.ContentUri;
-import net.simonvt.schematic.annotation.TableEndpoint;
+import static android.media.tv.TvContract.Programs.Genres.MOVIES;
 
 /**
  * Created by beesham on 23/12/16.
  */
 
-@ContentProvider(authority = OrderProvider.AUTHORITY, database = OrderDatabase.class)
-public class OrderProvider {
-    public static final String AUTHORITY = "com.myprofits.beesham.data.OrderProvider";
+public class OrderProvider extends ContentProvider{
 
-    static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    private static final String LOG_TAG = OrderProvider.class.getSimpleName();
 
-    interface Path{
-        String ORDERS = "orders";
+    private OrderDatabase mOrderDatabase;
+
+    private static final int ORDERS = 100;
+
+    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    static{
+        sUriMatcher.addURI(OrderContract.CONTENT_AUTHORITY, OrderContract.PATH_ORDERS, ORDERS);
     }
 
-    private static Uri buildUri(String... paths){
-        Uri.Builder builder = BASE_CONTENT_URI.buildUpon();
-        for (String path:paths){
-            builder.appendPath(path);
+    @Override
+    public boolean onCreate() {
+        mOrderDatabase = new OrderDatabase(getContext());
+        return true;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Cursor retCursor;
+        switch (sUriMatcher.match(uri)){
+            case ORDERS:
+                retCursor = mOrderDatabase.getReadableDatabase().query(
+                        OrderContract.OrdersEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        sortOrder,
+                        null,
+                        null);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
-        return builder.build();
+        retCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return retCursor;
     }
 
-    @TableEndpoint(table = OrderDatabase.ORDERS)
-    public static class Orders {
-        @ContentUri(
-                path = Path.ORDERS,
-                type = "vnd.android.cursor.dir/order"
-        )
-        public static final Uri CONTENT_URI = buildUri(Path.ORDERS);
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        switch(sUriMatcher.match(uri)){
+            case ORDERS:
+                return OrderContract.OrdersEntry.CONTENT_TYPE;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }    }
+
+    @Nullable
+    @Override
+    public Uri insert(Uri uri, ContentValues contentValues) {
+        return null;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        SQLiteDatabase db = mOrderDatabase.getWritableDatabase();
+        switch(sUriMatcher.match(uri)){
+            case ORDERS:
+                db.beginTransaction();
+                int returnCount = 0;
+                try{
+                    for(ContentValues contentValues : values){
+                        long _id = mOrderDatabase.getWritableDatabase().insert(
+                                OrderContract.OrdersEntry.TABLE_NAME,
+                                null,
+                                contentValues);
+                        if(_id != -1) returnCount++;
+                    }
+                    db.setTransactionSuccessful();
+                }finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+
+            default:
+                return super.bulkInsert(uri, values);
+        }
+    }
+
+    @Override
+    public int delete(Uri uri, String s, String[] strings) {
+        return 0;
+    }
+
+    @Override
+    public int update(Uri uri, ContentValues contentValues, String s, String[] strings) {
+        return 0;
     }
 }
