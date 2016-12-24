@@ -2,5 +2,6 @@
     <string name="app_name">MyProfits</string>
 
     <string name="total_revenue">Total Revenue</string>
+    <string name="network_toast" translatable="true">Uh-oh! This app requires an internet connection</string>
 
 </resources>
