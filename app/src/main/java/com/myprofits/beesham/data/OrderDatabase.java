@@ -44,6 +44,7 @@ public class OrderDatabase extends SQLiteOpenHelper {
                 + OrdersEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + OrdersEntry.COLUMN_CUSTOMER_NAME + " TEXT NOT NULL,"
                 + OrdersEntry.COLUMN_ORDER_ID+ " INTEGER NOT NULL, "
+                + OrdersEntry.COLUMN_SUBTOTAL_PRICE+ " REAL NOT NULL "
                 + ");";
 
         sqLiteDatabase.execSQL(SQL_CREATE_ORDERS_TABLE);

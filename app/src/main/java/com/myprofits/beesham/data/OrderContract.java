@@ -45,6 +45,7 @@ public class OrderContract {
         public static final String _ID = BaseColumns._ID;
         public static final String COLUMN_ORDER_ID = "order_id";
         public static final String COLUMN_CUSTOMER_NAME = "customer_name";
+        public static final String COLUMN_SUBTOTAL_PRICE = "subtotal_price";
 
     }
 }

@@ -116,8 +116,27 @@ public class OrderProvider extends ContentProvider{
     }
 
     @Override
-    public int delete(Uri uri, String s, String[] strings) {
-        return 0;
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        int rowsDeleted = 0;
+
+        //If selection is null, delete all rows
+        if(selection == null){
+            selection = "1";
+        }
+
+        switch (sUriMatcher.match(uri)){
+            case ORDERS:
+                rowsDeleted = mOrderDatabase.getWritableDatabase().delete(
+                        OrderContract.OrdersEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        if(rowsDeleted != 0) getContext().getContentResolver().notifyChange(uri, null);
+        return rowsDeleted;
     }
 
     @Override
