@@ -21,6 +21,12 @@
             android:exported="false"
             android:enabled="true"/>
 
+        <!--Order Provider-->
+        <provider
+            android:authorities="com.myprofits.beesham.data.OrderProvider"
+            android:name=".data.generated.OrderProvider"
+            android:exported="false"/>
+
     </application>
 
 </manifest>
