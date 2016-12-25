@@ -16,8 +16,17 @@
 
 package com.myprofits.beesham;
 
+import android.content.ContentValues;
+
+import com.myprofits.beesham.data.OrderContract;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by Beesham on 12/24/2016.
@@ -29,5 +38,45 @@ public class Utils {
     public static String formatDouble(double revenue){
         DecimalFormat df2 = new DecimalFormat(".##");
         return df2.format(revenue);
+    }
+
+    public static int checkResultsPageSize(String ordersJsonStr) throws JSONException {
+        JSONObject ordersJSON = new JSONObject(ordersJsonStr);
+        JSONArray ordersArrayJSON = ordersJSON.getJSONArray("orders");
+
+        return ordersArrayJSON.length();
+    }
+
+    public static ContentValues[] ordersJsonToContentValues(String ordersJsonStr) throws JSONException {
+
+        JSONObject ordersJSON = new JSONObject(ordersJsonStr);
+        JSONArray ordersArrayJSON = ordersJSON.getJSONArray("orders");
+
+        Vector<ContentValues> contentValuesVector = new Vector<>(ordersArrayJSON.length());
+
+        for(int i=0; i < ordersArrayJSON.length(); i++){
+            String order_id;
+            String customer_name;
+            double subtotal_price;
+
+            JSONObject customerOrderJson = ordersArrayJSON.getJSONObject(i);
+
+            order_id = customerOrderJson.getString("id");
+            customer_name = customerOrderJson.getJSONObject("customer").getString("first_name");
+            customer_name = customer_name.concat(
+                    customerOrderJson.getJSONObject("customer").getString("last_name"));
+            subtotal_price =customerOrderJson.getDouble("subtotal_price");
+
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(OrderContract.OrdersEntry.COLUMN_CUSTOMER_NAME, customer_name);
+            contentValues.put(OrderContract.OrdersEntry.COLUMN_ORDER_ID, order_id);
+            contentValues.put(OrderContract.OrdersEntry.COLUMN_SUBTOTAL_PRICE, subtotal_price);
+
+            contentValuesVector.add(contentValues);
+        }
+
+        ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
+        contentValuesVector.toArray(contentValuesArray);
+        return contentValuesArray;
     }
 }
