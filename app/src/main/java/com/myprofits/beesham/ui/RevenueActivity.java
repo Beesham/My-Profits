@@ -16,14 +16,14 @@
 
 package com.myprofits.beesham.ui;
 
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,6 +36,7 @@ import com.myprofits.beesham.service.OrdersIntentService;
 public class RevenueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = RevenueActivity.class.getSimpleName();
+    private static final int ORDER_LOADER = 0;
     private Intent mServiceIntent;
     boolean isConnected;
 
@@ -60,6 +61,8 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
                 networkToast();
             }
         }
+
+        getLoaderManager().initLoader(ORDER_LOADER, null, this);
     }
 
     public void networkToast(){
@@ -77,18 +80,8 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
 
         CursorLoader loader = null;
         switch(id) {
-            case 1:
-                Log.v(LOG_TAG, "Loading from movies");
-                loader = new CursorLoader(this,
-                        OrderContract.OrdersEntry.CONTENT_URI,
-                        projection,
-                        null,
-                        null,
-                        null);
-                break;
-
-            case 2:
-                Log.v(LOG_TAG, "Loading from movies favorite");
+            case 0:
+                Log.v(LOG_TAG, "Loading from orders");
                 loader = new CursorLoader(this,
                         OrderContract.OrdersEntry.CONTENT_URI,
                         projection,
@@ -102,7 +95,8 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-
+        Cursor c = data;
+        Log.v(LOG_TAG, "cursor size: " + data.getCount());
     }
 
     @Override
