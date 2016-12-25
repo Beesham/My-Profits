@@ -17,6 +17,8 @@
 package com.myprofits.beesham;
 
 import android.content.ContentValues;
+import android.net.Uri;
+import android.util.Log;
 
 import com.myprofits.beesham.data.OrderContract;
 
@@ -78,5 +80,20 @@ public class Utils {
         ContentValues[] contentValuesArray = new ContentValues[contentValuesVector.size()];
         contentValuesVector.toArray(contentValuesArray);
         return contentValuesArray;
+    }
+
+    public static Uri buildUri(String page){
+        final String BASE_URL = "https://shopicruit.myshopify.com/admin/orders.json?";
+        final String PAGE_PARAM = "page";
+        final String ACCESS_TOKEN_PARAM = "access_token";
+
+        Uri orderUrl = Uri.parse(BASE_URL)
+                .buildUpon()
+                .appendQueryParameter(PAGE_PARAM, page)
+                .appendQueryParameter(ACCESS_TOKEN_PARAM, "c32313df0d0ef512ca64d5b336a0d7c6")
+                .build();
+
+        Log.v(LOG_TAG, "url: " + orderUrl.toString());
+        return orderUrl;
     }
 }
