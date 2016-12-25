@@ -26,14 +26,24 @@ import android.net.NetworkInfo;
 import android.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.myprofits.beesham.R;
+import com.myprofits.beesham.Utils;
 import com.myprofits.beesham.data.OrderContract;
 import com.myprofits.beesham.service.OrdersIntentService;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class RevenueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    @BindView(R.id.revenue_text_view)
+    TextView revenue_text_view;
 
     private static final String LOG_TAG = RevenueActivity.class.getSimpleName();
     private static final int ORDER_LOADER = 0;
@@ -52,6 +62,7 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
                 activeNetwork.isConnectedOrConnecting();
 
         setContentView(R.layout.activity_revenue);
+        ButterKnife.bind(this);
 
         mServiceIntent = new Intent(this, OrdersIntentService.class);
         if (savedInstanceState == null){
@@ -81,7 +92,6 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
         CursorLoader loader = null;
         switch(id) {
             case 0:
-                Log.v(LOG_TAG, "Loading from orders");
                 loader = new CursorLoader(this,
                         OrderContract.OrdersEntry.CONTENT_URI,
                         projection,
@@ -95,8 +105,12 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Cursor c = data;
-        Log.v(LOG_TAG, "cursor size: " + data.getCount());
+        double revenue = 0;
+        data.moveToFirst();
+        while(data.moveToNext()){
+            revenue += data.getDouble(data.getColumnIndex(OrderContract.OrdersEntry.COLUMN_SUBTOTAL_PRICE));
+        }
+        revenue_text_view.setText(getString(R.string.revenue, Utils.formatDouble(revenue)));
     }
 
     @Override

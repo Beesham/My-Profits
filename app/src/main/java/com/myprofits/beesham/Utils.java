@@ -16,6 +16,7 @@
 
 package com.myprofits.beesham;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -25,8 +26,8 @@ import java.util.ArrayList;
 public class Utils {
     private static String LOG_TAG = Utils.class.getSimpleName();
 
-    public static ArrayList ordersJsonToContentValues(String Json){
-
-        return null;
+    public static String formatDouble(double revenue){
+        DecimalFormat df2 = new DecimalFormat(".##");
+        return df2.format(revenue);
     }
 }
