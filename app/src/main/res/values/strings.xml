@@ -2,6 +2,7 @@
     <string name="app_name">MyProfits</string>
 
     <string name="total_revenue">Total Revenue</string>
+    <string name="no_revenue" translatable="true">No Revenue Yet!</string>
     <string name="network_toast" translatable="true">Uh-oh! This app requires an internet connection</string>
     <string name="revenue"><xliff:g id="revenue">$%s</xliff:g></string>
 </resources>

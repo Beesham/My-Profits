@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,8 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
 
     @BindView(R.id.revenue_text_view)
     TextView revenue_text_view;
+    @BindView(R.id.total_revenue_text_view)
+    TextView total_revenue_lable_text_view;
 
     private static final String LOG_TAG = RevenueActivity.class.getSimpleName();
     private static final int ORDER_LOADER = 0;
@@ -106,9 +109,17 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         double revenue = 0;
-        data.moveToFirst();
-        while(data.moveToNext()){
-            revenue += data.getDouble(data.getColumnIndex(OrderContract.OrdersEntry.COLUMN_SUBTOTAL_PRICE));
+        if(data.moveToFirst()) {
+            if(revenue_text_view.getVisibility() == View.INVISIBLE){
+                revenue_text_view.setVisibility(View.VISIBLE);
+                total_revenue_lable_text_view.setText(getString(R.string.total_revenue));
+            }
+            while (data.moveToNext()) {
+                revenue += data.getDouble(data.getColumnIndex(OrderContract.OrdersEntry.COLUMN_SUBTOTAL_PRICE));
+            }
+        }else{
+            total_revenue_lable_text_view.setText(getString(R.string.no_revenue));
+            revenue_text_view.setVisibility(View.INVISIBLE);
         }
         revenue_text_view.setText(getString(R.string.revenue, Utils.formatDouble(revenue)));
     }
