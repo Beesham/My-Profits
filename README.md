@@ -2,6 +2,8 @@
 
 Description: This application displays the total order revenue from a shopify merchant
 
+![screenshot dec 25 2016 9-15-28 am](https://cloud.githubusercontent.com/assets/10713096/21471486/060510b8-ca83-11e6-90b4-05830d5091c5.png)
+
 
 Key Concepts applied
 --------------------
