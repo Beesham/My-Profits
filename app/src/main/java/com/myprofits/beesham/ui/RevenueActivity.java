@@ -22,16 +22,20 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.myprofits.beesham.R;
+import com.myprofits.beesham.data.OrderContract;
 import com.myprofits.beesham.service.OrdersIntentService;
 
 public class RevenueActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final String LOG_TAG = RevenueActivity.class.getSimpleName();
     private Intent mServiceIntent;
     boolean isConnected;
 
@@ -64,7 +68,36 @@ public class RevenueActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return null;
+        String[] projection = {
+                OrderContract.OrdersEntry._ID,
+                OrderContract.OrdersEntry.COLUMN_ORDER_ID,
+                OrderContract.OrdersEntry.COLUMN_CUSTOMER_NAME,
+                OrderContract.OrdersEntry.COLUMN_SUBTOTAL_PRICE
+        };
+
+        CursorLoader loader = null;
+        switch(id) {
+            case 1:
+                Log.v(LOG_TAG, "Loading from movies");
+                loader = new CursorLoader(this,
+                        OrderContract.OrdersEntry.CONTENT_URI,
+                        projection,
+                        null,
+                        null,
+                        null);
+                break;
+
+            case 2:
+                Log.v(LOG_TAG, "Loading from movies favorite");
+                loader = new CursorLoader(this,
+                        OrderContract.OrdersEntry.CONTENT_URI,
+                        projection,
+                        null,
+                        null,
+                        null);
+                break;
+        }
+        return loader;
     }
 
     @Override
