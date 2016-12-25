@@ -2,8 +2,6 @@ package com.myprofits.beesham.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.net.Uri;
-import android.util.Log;
 
 import com.myprofits.beesham.data.OrderContract;
 
